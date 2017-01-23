@@ -61,19 +61,13 @@ func (this *EtcdV3RegisterPlugin) Start() (err error) {
 				//set this same metrics for all services at this server
 
 				for _,name := range this.Services {
-					println(this.BasePath,name,this.ServiceAddress)
 					nodePath = fmt.Sprintf("%s/%s", name, this.ServiceAddress)
-					println(nodePath)
 					ctx,cancel := context.WithTimeout(context.Background(),this.DialTimeout)
 					resp,err = this.KeysAPI.Get(ctx,nodePath)
-					println(resp.Kvs)
 					defer cancel()
 					if err != nil {
 						log.Println("get etcd key failed. " + err.Error())
 					} else {
-						for _,v := range resp.Kvs {
-							println(v.Key,v.Value,v.Lease,v.Version)
-						}
 						if v,err = url.ParseQuery(string(resp.Kvs[0].Value)); err != nil {
 							continue
 						}
